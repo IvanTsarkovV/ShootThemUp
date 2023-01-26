@@ -5,6 +5,7 @@
 #include "Weapon/STUBaseWeapon.h"
 #include "GameFramework/Character.h"
 #include "Animations/STUEquipFinishedAnimNotify.h"
+#include "Animations/STUReloadFinishedAnimNotify.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogWeaponComponent, All, All);
 
@@ -115,11 +116,6 @@ void USTUWeaponComponent::NextWeapon()
 	EquipWeapon(CurrentWeaponIndex);
 }
 
-void USTUWeaponComponent::Reload()
-{
-	PlayAnimMontage(CurrentReloadAnimMontage);
-}
-
 void USTUWeaponComponent::PlayAnimMontage(UAnimMontage* Animation)
 {
 	ACharacter* Character = Cast<ACharacter>(GetOwner());
@@ -130,16 +126,16 @@ void USTUWeaponComponent::PlayAnimMontage(UAnimMontage* Animation)
 
 void USTUWeaponComponent::InitAnimations()
 {
-	if (!EquipAnimMontage) return;
-	const auto NotifyEvents = EquipAnimMontage->Notifies;
-	for (auto NotifyEvent : NotifyEvents)
+	auto EquipFinishedNotify = FindNotifyByClass<USTUEquipFinishedAnimNotify>(EquipAnimMontage);
+	if (EquipFinishedNotify)
 	{
-		auto EquipFinishedNotify = Cast<USTUEquipFinishedAnimNotify>(NotifyEvent.Notify);
-		if (EquipFinishedNotify)
-		{
-			EquipFinishedNotify->OnNotified.AddUObject(this, &USTUWeaponComponent::OnEquipFinished);
-			break;
-		}
+		EquipFinishedNotify->OnNotified.AddUObject(this, &USTUWeaponComponent::OnEquipFinished);
+	}
+	for (auto OneWeaponData : WeaponData)
+	{
+		auto ReloadFinishedNotify = FindNotifyByClass<USTUReloadFinishedAnimNotify>(OneWeaponData.ReloadAnimMontage);
+		if (!ReloadFinishedNotify) continue;
+		ReloadFinishedNotify->OnNotified.AddUObject(this, &USTUWeaponComponent::OnReloadFinished);
 	}
 }
 
@@ -152,12 +148,33 @@ void USTUWeaponComponent::OnEquipFinished(USkeletalMeshComponent* MeshComponent)
 	UE_LOG(LogWeaponComponent, Display, TEXT("Equip finished"));
 }
 
+void USTUWeaponComponent::OnReloadFinished(USkeletalMeshComponent* MeshComponent)
+{
+	ACharacter* Character = Cast<ACharacter>(GetOwner());
+	if (!Character || Character->GetMesh() != MeshComponent) return;
+
+	ReloadAnimInProgress = false;
+	UE_LOG(LogWeaponComponent, Display, TEXT("Equip finished"));
+}
+
 bool USTUWeaponComponent::CanFire() const
 {
-	return CurrentWeapon && !EquipAnimInProgress;
+	return CurrentWeapon && !EquipAnimInProgress && !ReloadAnimInProgress;
 }
 
 bool USTUWeaponComponent::CanEquip() const
 {
-	return !EquipAnimInProgress;
+	return !EquipAnimInProgress && !ReloadAnimInProgress;
+}
+
+bool USTUWeaponComponent::CanReload() const
+{
+	return CurrentWeapon && !EquipAnimInProgress && !ReloadAnimInProgress;
+}
+
+void USTUWeaponComponent::Reload()
+{
+	if (!CanReload()) return;
+	ReloadAnimInProgress = true;
+	PlayAnimMontage(CurrentReloadAnimMontage);
 }
