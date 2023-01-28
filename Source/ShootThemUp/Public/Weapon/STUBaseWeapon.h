@@ -22,9 +22,11 @@ public:
 
 	virtual void StartFire();
 	virtual void StopFire();
-	
+
 	void ChangeClip();
 	bool CanReload() const;
+
+	FWeaponUIData GetUIData() const { return UIData; }
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Component")
@@ -39,6 +41,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
 	FAmmoData DefaultAmmo{15, 10, false};
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="UI")
+	FWeaponUIData UIData;
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
@@ -48,7 +53,7 @@ protected:
 	APlayerController* GetPlayerController() const;
 	bool GetPlayerViewPoint(FVector& ViewLocation, FRotator& ViewRotator) const;
 	FVector GetMuzzleWorldLocation() const;
-	
+
 	void MakeHit(FHitResult& HitResult, const FVector& TraceStart, const FVector& TraceEnd);
 
 	void DecreaseAmmo();
