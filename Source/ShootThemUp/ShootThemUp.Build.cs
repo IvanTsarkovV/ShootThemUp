@@ -9,7 +9,16 @@ public class ShootThemUp : ModuleRules
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
 		PublicDependencyModuleNames.AddRange(new string[]
-			{ "Core", "CoreUObject", "Engine", "InputCore", "Niagara", "PhysicsCore" });
+		{
+			"Core", 
+			"CoreUObject", 
+			"Engine", 
+			"InputCore", 
+			"Niagara", 
+			"PhysicsCore",
+			"GameplayTasks",
+			"NavigationSystem"
+		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] { });
 
@@ -23,7 +32,8 @@ public class ShootThemUp : ModuleRules
 			"ShootThemUp/Public/UI",
 			"ShootThemUp/Public/Animations",
 			"ShootThemUp/Public/Pickups",
-			"ShootThemUp/Public/AI"
+			"ShootThemUp/Public/AI",
+			"ShootThemUp/Public/AI/Tasks"
 		});
 
 		// Uncomment if you are using Slate UI
