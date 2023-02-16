@@ -19,7 +19,13 @@ public:
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Components")
 	USTUAIPerceptionComponent* STUAIPerceptionComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="AI")
+	FName FocusOnKeyName = "EnemyActor";
 	
 	virtual void OnPossess(APawn* InPawn) override;
 	virtual void Tick(float DeltaTime) override;
+
+private:
+	AActor* GetFocusOnActor() const;
 };
