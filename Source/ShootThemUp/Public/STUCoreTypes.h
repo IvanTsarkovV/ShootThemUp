@@ -10,7 +10,8 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FOnClipEmptySignature, ASTUBaseWeapon*);
 USTRUCT(BlueprintType)
 struct FAmmoData
 {
-	GENERATED_USTRUCT_BODY();
+	GENERATED_USTRUCT_BODY()
+	;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
 	int32 Bullets;
@@ -62,7 +63,7 @@ struct FDecalData
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="VFX")
 	UMaterialInterface* Material;
-	
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="VFX")
 	FVector Size = FVector(10.0f);
 
@@ -83,4 +84,13 @@ struct FImpactData
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="VFX")
 	FDecalData DecalData;
+};
+
+USTRUCT(BlueprintType)
+struct FGameData
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Game", meta=(ClampMin="1", ClampMax="100"))
+	int32 PlayersNum = 2;
 };
