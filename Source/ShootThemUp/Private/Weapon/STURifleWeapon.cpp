@@ -52,7 +52,7 @@ void ASTURifleWeapon::MakeShot()
 	MakeHit(HitResult, TraceStart, TraceEnd);
 
 	FVector TraceFXEnd = TraceEnd;
-	
+
 	if (HitResult.bBlockingHit)
 	{
 		TraceFXEnd = HitResult.ImpactPoint;
@@ -88,12 +88,12 @@ void ASTURifleWeapon::MakeDamage(const FHitResult& HitResult)
 	const auto DamageActor = HitResult.GetActor();
 	if (!DamageActor) return;
 
-	DamageActor->TakeDamage(DamageAmount, FDamageEvent{}, GetPlayerController(), this);
+	DamageActor->TakeDamage(DamageAmount, FDamageEvent{}, GetController(), this);
 }
 
 void ASTURifleWeapon::InitMuzzleFX()
 {
-	if(!MuzzleFXComponent)
+	if (!MuzzleFXComponent)
 	{
 		MuzzleFXComponent = SpawnMuzzleFX();
 	}
@@ -102,7 +102,7 @@ void ASTURifleWeapon::InitMuzzleFX()
 
 void ASTURifleWeapon::SetMuzzleFXVisibility(float Visible)
 {
-	if(MuzzleFXComponent)
+	if (MuzzleFXComponent)
 	{
 		MuzzleFXComponent->SetPaused(!Visible);
 		MuzzleFXComponent->SetVisibility(Visible, true);
@@ -112,8 +112,14 @@ void ASTURifleWeapon::SetMuzzleFXVisibility(float Visible)
 void ASTURifleWeapon::SpawnTraceFX(const FVector& TraceStart, const FVector& TraceEnd)
 {
 	const auto TraceFXComponent = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), TraceFX, TraceStart);
-	if(TraceFXComponent)
+	if (TraceFXComponent)
 	{
 		TraceFXComponent->SetNiagaraVariableVec3(TraceTargetName, TraceEnd);
 	}
+}
+
+AController* ASTURifleWeapon::GetController() const
+{
+	const auto Pawn = Cast<APawn>(GetOwner());
+	return Pawn ? Pawn->GetController() : nullptr;
 }

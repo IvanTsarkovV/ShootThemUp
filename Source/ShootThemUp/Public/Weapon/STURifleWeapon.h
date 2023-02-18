@@ -17,7 +17,7 @@ class SHOOTTHEMUP_API ASTURifleWeapon : public ASTUBaseWeapon
 
 public:
 	ASTURifleWeapon();
-	
+
 	virtual void StartFire() override;
 	virtual void StopFire() override;
 
@@ -49,9 +49,11 @@ private:
 
 	UPROPERTY()
 	UNiagaraComponent* MuzzleFXComponent;
-	
+
 	void MakeDamage(const FHitResult& HitResult);
 	void InitMuzzleFX();
 	void SetMuzzleFXVisibility(float Visible);
 	void SpawnTraceFX(const FVector& TraceStart, const FVector& TraceEnd);
+
+	AController* GetController() const;
 };
